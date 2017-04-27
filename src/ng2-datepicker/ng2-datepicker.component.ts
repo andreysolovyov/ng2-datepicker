@@ -332,6 +332,26 @@ export class DatePickerComponent implements ControlValueAccessor, OnInit {
     }
   }
 
+  handleBlur() {
+      if (this.date) {
+          const date: moment.Moment = Moment(this.date.formatted);
+          if (date) {
+              this.value = {
+                  day: date.format('DD'),
+                  month: date.format('MM'),
+                  year: date.format('YYYY'),
+                  formatted: date.format(this.options.format),
+                  momentObj: date
+              };
+          }
+      }
+      else
+      {
+          this.value = { day: null, month: null, year: null, momentObj: null, formatted: null };
+          this.close();
+      }
+  }
+
   writeValue(date: DateModel) {
     if (!date) { return; }
     this.date = date;
