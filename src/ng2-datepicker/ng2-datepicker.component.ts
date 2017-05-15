@@ -9,7 +9,7 @@
   EventEmitter,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { SlimScrollOptions } from 'ng2-slimscroll';
+import { SlimScrollOptions } from 'ng2-slimscroll-aot';
 import * as moment from 'moment';
 
 const Moment: any = (<any>moment).default || moment;
@@ -228,13 +228,15 @@ export class DatePickerComponent implements ControlValueAccessor, OnInit {
           if (!date) {
             throw new Error(`Invalid date: ${e.data}`);
           }
-          this.value = {
-            day: date.format('DD'),
-            month: date.format('MM'),
-            year: date.format('YYYY'),
-            formatted: date.format(this.options.format),
-            momentObj: date
-          };
+          if (date.isValid()) {
+              this.value = {
+                  day: date.format('DD'),
+                  month: date.format('MM'),
+                  year: date.format('YYYY'),
+                  formatted: date.format(this.options.format),
+                  momentObj: date
+              };
+          }
         }
       });
     }
@@ -332,10 +334,10 @@ export class DatePickerComponent implements ControlValueAccessor, OnInit {
     }
   }
 
-  handleBlur() {
+  handleBlur($event: any) {
       if (this.date) {
           const date: moment.Moment = Moment(this.date.formatted);
-          if (date) {
+          if (date && date.isValid()) {
               this.value = {
                   day: date.format('DD'),
                   month: date.format('MM'),
